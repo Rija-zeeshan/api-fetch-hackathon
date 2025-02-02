@@ -1,37 +1,36 @@
 import ProductDetail from '@/components/ProductDetail';
 import { client } from '@/sanity/lib/client';
 
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  description: string;
-  category: string;
-  stockLevel: number;
-  image: string;
-  imagePath: string;
-  discountPercentage: number;
-  isFeaturedProduct: number;
-  _id: string;
-  sizes: string[];
-}
-
 interface ProductPageProps {
-  params: { id: string };
+  params: {
+    id: string;
+  };
 }
 
 const Page = async ({ params }: ProductPageProps) => {
-  const query = `*[ _type == "product" && _id == $id]{
-    name,
-    "id": _id,
-    price,
-    description,
-    category,
-    stockLevel,
-    "image": image.asset._ref
-  }[0]`;
+  // Fetch product data based on the product ID
+  const fetchProduct = async (id: string) => {
+    try {
+      const query = `*[ _type == "product" && _id == $id]{
+        name,
+        "id": _id,
+        price,
+        description,
+        category,
+        stockLevel,
+        "image": image.asset._ref
+      }[0]`;
 
-  const product: Product | null = await client.fetch(query, { id: params.id });
+      const product = await client.fetch(query, { id });
+      console.log('Fetched Product:', product); // Log fetched product for debugging
+      return product;
+    } catch (error) {
+      console.error('Error fetching product:', error); // Log error in case of failure
+      return null;
+    }
+  };
+
+  const product = await fetchProduct(params.id);
 
   if (!product) {
     return (
