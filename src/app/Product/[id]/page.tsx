@@ -1,8 +1,13 @@
-// pages/product/[id].tsx
 import ProductDetail from '@/components/ProductDetail';
 import { client } from '@/sanity/lib/client';
 
-const Page = async ({ params }: { params: { id: string } }) => {
+interface ProductPageProps {
+  params: {
+    id: string;
+  };
+}
+
+const Page = async ({ params }: ProductPageProps) => {
   const query = `*[ _type == "product" && _id == $id]{
     name,
     "id": _id,
