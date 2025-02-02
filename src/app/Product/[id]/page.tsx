@@ -1,10 +1,23 @@
 import ProductDetail from '@/components/ProductDetail';
 import { client } from '@/sanity/lib/client';
 
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  description: string;
+  category: string;
+  stockLevel: number;
+  image: string;
+  imagePath: string;
+  discountPercentage: number;
+  isFeaturedProduct: number;
+  _id: string;
+  sizes: string[];
+}
+
 interface ProductPageProps {
-  params: {
-    id: string;
-  };
+  params: { id: string };
 }
 
 const Page = async ({ params }: ProductPageProps) => {
