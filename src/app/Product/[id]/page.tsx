@@ -2,13 +2,11 @@ import ProductDetail from '@/components/ProductDetail';
 import { client } from '@/sanity/lib/client';
 
 interface ProductPageProps {
-  params: {
-    id: string;
-  };
+  params: Record<string, string>; // ✅ Fix: Use Record<string, string>
 }
 
-// Fetch product data outside the component
-const fetchProduct = async (id: string) => {
+// ✅ Fetch product outside the component
+async function fetchProduct(id: string) {
   try {
     const query = `*[ _type == "product" && _id == $id]{
       name,
@@ -21,17 +19,21 @@ const fetchProduct = async (id: string) => {
     }[0]`;
 
     const product = await client.fetch(query, { id });
-    console.log('Fetched Product:', product);
     return product;
   } catch (error) {
     console.error('Error fetching product:', error);
     return null;
   }
-};
+}
 
-// ✅ Make the Page component synchronous
-const Page = async ({ params }: ProductPageProps) => {
-  const product = await fetchProduct(params.id);
+// ✅ Page component
+export default async function ProductPage({ params }: ProductPageProps) {
+  const productId = params?.id; // ✅ Ensure `params` exists
+  if (!productId) {
+    return <h1>Invalid Product ID</h1>;
+  }
+
+  const product = await fetchProduct(productId);
 
   if (!product) {
     return (
@@ -48,6 +50,4 @@ const Page = async ({ params }: ProductPageProps) => {
       </div>
     </div>
   );
-};
-
-export default Page;
+}
