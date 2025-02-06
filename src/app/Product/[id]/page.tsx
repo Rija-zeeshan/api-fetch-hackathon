@@ -1,8 +1,12 @@
 import ProductDetail from '@/components/ProductDetail';
 import { client } from '@/sanity/lib/client';
 
-const Page = async ({ params }: { params: { id: string } }) => {
-  const { id } = params; // Directly access params.id
+interface ProductPageProps {
+  params: { id: string };  // Change type to { id: string } directly, no need for Promise
+}
+
+const Page = async ({ params }: ProductPageProps) => {
+  const { id } = params; // No need to await params
 
   // Fetch product data
   const fetchProduct = async (id: string) => {
@@ -25,7 +29,7 @@ const Page = async ({ params }: { params: { id: string } }) => {
     }
   };
 
-  const product = await fetchProduct(id);
+  const product = await fetchProduct(id); // Directly use id without awaiting
 
   if (!product) {
     return (
@@ -44,4 +48,4 @@ const Page = async ({ params }: { params: { id: string } }) => {
   );
 };
 
-export default Page;
+export default Page;
