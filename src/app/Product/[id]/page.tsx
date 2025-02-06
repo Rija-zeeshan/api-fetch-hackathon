@@ -1,6 +1,5 @@
 import ProductDetail from '@/components/ProductDetail';
 import { client } from '@/sanity/lib/client';
-import { GetServerSideProps } from 'next'; // Import GetServerSideProps for Next.js
 
 const Page = async ({ params }: { params: { id: string } }) => {
   const { id } = params; // Directly access params.id
