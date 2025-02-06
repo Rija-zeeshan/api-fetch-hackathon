@@ -2,38 +2,34 @@ import ProductDetail from '@/components/ProductDetail';
 import { client } from '@/sanity/lib/client';
 
 interface ProductPageProps {
-  params: Record<string, string>; // ✅ Fix: Use Record<string, string>
+  params: Promise<{ id: string }>; // Change type to Promise<{ id: string }>
 }
 
-// ✅ Fetch product outside the component
-async function fetchProduct(id: string) {
-  try {
-    const query = `*[ _type == "product" && _id == $id]{
-      name,
-      "id": _id,
-      price,
-      description,
-      category,
-      stockLevel,
-      "image": image.asset._ref
-    }[0]`;
+const Page = async ({ params }: ProductPageProps) => {
+  const { id } = await params; // Await the params object
 
-    const product = await client.fetch(query, { id });
-    return product;
-  } catch (error) {
-    console.error('Error fetching product:', error);
-    return null;
-  }
-}
+  // Fetch product data
+  const fetchProduct = async (id: string) => {
+    try {
+      const query = `*[ _type == "product" && _id == $id]{
+        name,
+        "id": _id,
+        price,
+        description,
+        category,
+        stockLevel,
+        "image": image.asset._ref
+      }[0]`;
 
-// ✅ Page component
-export default async function ProductPage({ params }: ProductPageProps) {
-  const productId = params?.id; // ✅ Ensure `params` exists
-  if (!productId) {
-    return <h1>Invalid Product ID</h1>;
-  }
+      const product = await client.fetch(query, { id });
+      return product;
+    } catch (error) {
+      console.error('Error fetching product:', error);
+      return null;
+    }
+  };
 
-  const product = await fetchProduct(productId);
+  const product = await fetchProduct(id); // Use awaited `id`
 
   if (!product) {
     return (
@@ -50,4 +46,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
       </div>
     </div>
   );
-}
+};
+
+export default Page;
