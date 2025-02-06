@@ -7,29 +7,30 @@ interface ProductPageProps {
   };
 }
 
+// Fetch product data outside the component
+const fetchProduct = async (id: string) => {
+  try {
+    const query = `*[ _type == "product" && _id == $id]{
+      name,
+      "id": _id,
+      price,
+      description,
+      category,
+      stockLevel,
+      "image": image.asset._ref
+    }[0]`;
+
+    const product = await client.fetch(query, { id });
+    console.log('Fetched Product:', product);
+    return product;
+  } catch (error) {
+    console.error('Error fetching product:', error);
+    return null;
+  }
+};
+
+// ✅ Make the Page component synchronous
 const Page = async ({ params }: ProductPageProps) => {
-  // Fetch product data based on the product ID
-  const fetchProduct = async (id: string) => {
-    try {
-      const query = `*[ _type == "product" && _id == $id]{
-        name,
-        "id": _id,
-        price,
-        description,
-        category,
-        stockLevel,
-        "image": image.asset._ref
-      }[0]`;
-
-      const product = await client.fetch(query, { id });
-      console.log('Fetched Product:', product); // Log fetched product for debugging
-      return product;
-    } catch (error) {
-      console.error('Error fetching product:', error); // Log error in case of failure
-      return null;
-    }
-  };
-
   const product = await fetchProduct(params.id);
 
   if (!product) {
