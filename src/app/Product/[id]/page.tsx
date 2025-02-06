@@ -1,12 +1,9 @@
 import ProductDetail from '@/components/ProductDetail';
 import { client } from '@/sanity/lib/client';
+import { GetServerSideProps } from 'next'; // Import GetServerSideProps for Next.js
 
-interface ProductPageProps {
-  params: Promise<{ id: string }>; // Change type to Promise<{ id: string }>
-}
-
-const Page = async ({ params }: ProductPageProps) => {
-  const { id } = await params; // Await the params object
+const Page = async ({ params }: { params: { id: string } }) => {
+  const { id } = params; // Directly access params.id
 
   // Fetch product data
   const fetchProduct = async (id: string) => {
@@ -29,7 +26,7 @@ const Page = async ({ params }: ProductPageProps) => {
     }
   };
 
-  const product = await fetchProduct(id); // Use awaited `id`
+  const product = await fetchProduct(id);
 
   if (!product) {
     return (
@@ -48,4 +45,4 @@ const Page = async ({ params }: ProductPageProps) => {
   );
 };
 
-export default Page;
+export default Page;
